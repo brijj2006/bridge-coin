@@ -37,6 +37,22 @@ class Blockchain {
     newBlock.hash = newBlock.calculateHash();
     this.chain.push(newBlock);
   }
+
+  isChainValid() {
+    for (let i = 1; i < this.chain.length; i++) {
+      const currentBlock = this.chain[i];
+      const previousBlock = this.chain[i - 1];
+
+      if (currentBlock.hash != currentBlock.calculateHash()) {
+        return false;
+      }
+
+      if (currentBlock.previousHash != previousBlock.hash) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 let bridgeCoin = new Blockchain();
@@ -44,7 +60,6 @@ bridgeCoin.addBlock(new Block(1, "01/06/2026", { amount: 4 }));
 bridgeCoin.addBlock(new Block(2, "02/06/2026", { amount: 10 }));
 
 console.log(JSON.stringify(bridgeCoin, null, 4));
-
 //output
 /**
  * {
@@ -77,3 +92,14 @@ console.log(JSON.stringify(bridgeCoin, null, 4));
     ]
 }
  */
+
+console.log("Is Blockchain Valid? ", bridgeCoin.isChainValid());
+//Is Blockchain Valid?  true
+
+bridgeCoin.chain[1].data = { amount: 100 };
+console.log("Is Blockchain Valid? ", bridgeCoin.isChainValid());
+//Is Blockchain Valid?  false
+
+bridgeCoin.chain[1].hash = bridgeCoin.chain[1].calculateHash();
+console.log("Is Blockchain Valid? ", bridgeCoin.isChainValid());
+//Is Blockchain Valid?  false
